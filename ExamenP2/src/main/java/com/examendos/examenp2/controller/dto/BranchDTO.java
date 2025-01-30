@@ -12,15 +12,15 @@ import lombok.Data;
 public class BranchDTO {
     private String id;
     
-    @NotBlank(message = "El correo electrónico es requerido")
-    @Email(message = "Formato de correo electrónico inválido")
+    @NotBlank(message = "El correo electronico es requerido")
+    @Email(message = "Formato de correo electronico invalido")
     private String emailAddress;
     
     @NotBlank(message = "El nombre es requerido")
     private String name;
     
-    @NotBlank(message = "El número de teléfono es requerido")
-    @Pattern(regexp = "^[0-9]{10}$", message = "El número de teléfono debe tener 10 dígitos")
+    @NotBlank(message = "El numero de telefono es requerido")
+    @Pattern(regexp = "^[0-9]{10}$", message = "El número de telefono debe tener 10 caracteres")
     private String phoneNumber;
     
     private String state;

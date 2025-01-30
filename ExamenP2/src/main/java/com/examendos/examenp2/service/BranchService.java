@@ -42,17 +42,55 @@ public class BranchService {
     }
     
     public Branch updatePhoneNumber(String id, String phoneNumber) {
-        log.info("Actualizando número de teléfono para la sucursal: {}", id);
+        log.info("Actualizando numero de telefono para la sucursal: {}", id);
         Branch branch = findById(id);
         
         if (!branch.getPhoneNumber().matches("^[0-9]{10}$")) {
-            throw new IllegalArgumentException("El número de teléfono debe tener 10 dígitos");
+            throw new IllegalArgumentException("El numero de telefono debe tener 10 caracteres");
         }
         
         branch.setPhoneNumber(phoneNumber);
         branch.setLastModifiedDate(LocalDateTime.now());
-        log.info("Número de teléfono actualizado. Nueva fecha de modificación: {}", branch.getLastModifiedDate());
+        log.info("Numero de telefono actualizado, nueva fecha de modificacion: {}", branch.getLastModifiedDate());
         return repository.save(branch);
     }
     
+    public Branch addHoliday(String id, BranchHoliday holiday) {
+        Branch branch = findById(id);
+        branch.getBranchHolidays().add(holiday);
+        branch.setLastModifiedDate(LocalDateTime.now());
+        return repository.save(branch);
+    }
+    
+    public Branch removeHoliday(String id, LocalDate date) {
+        log.info("Intentando eliminar feriado para la fecha {} de la sucursal {}", date, id);
+        Branch branch = findById(id);
+        
+        boolean existeFeriado = branch.getBranchHolidays().stream()
+                .anyMatch(h -> h.getDate().equals(date));
+                
+        if (!existeFeriado) {
+            throw new NotFoundException(date.toString(), "Feriado");
+        }
+        
+        branch.getBranchHolidays().removeIf(h -> h.getDate().equals(date));
+        branch.setLastModifiedDate(LocalDateTime.now());
+        log.info("Feriado eliminado exitosamente");
+        return repository.save(branch);
+    }
+    
+    public List<BranchHoliday> getHolidays(String id) {
+        Branch branch = findById(id);
+        return branch.getBranchHolidays();
+    }
+    
+    public boolean isHoliday(String id, LocalDate date) {
+        Branch branch = findById(id);
+        return branch.getBranchHolidays().stream()
+                .anyMatch(h -> h.getDate().equals(date));
+    }
+
+    public Branch update(String id, Branch updatedBranch) {
+        throw new UpdateNotAllowedException("Solo se permite actualizar el numero de telefono");
+    }
 } 
